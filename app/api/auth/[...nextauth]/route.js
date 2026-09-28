@@ -49,6 +49,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
 export const authOptions = {
   adapter: TursoAdapter(),
   providers,
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
     error: '/login',
