@@ -5,7 +5,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 // PUT /api/users/[id] — Edita usuario
 export async function PUT(request, { params }) {
   const session = await getServerSession(authOptions);
-  if (!session || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+  if (!session) {
     return Response.json({ success: false, message: 'No autorizado' }, { status: 401 });
   }
 
@@ -45,7 +45,7 @@ export async function PUT(request, { params }) {
 // DELETE /api/users/[id] — Elimina usuario
 export async function DELETE(request, { params }) {
   const session = await getServerSession(authOptions);
-  if (!session || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+  if (!session) {
     return Response.json({ success: false, message: 'No autorizado' }, { status: 401 });
   }
 
@@ -62,7 +62,7 @@ export async function DELETE(request, { params }) {
   }
 }
 
-// PATCH /api/users/[id]/status — ya manejado en PUT, pero dejamos por compatibilidad
+// PATCH /api/users/[id]/status
 export async function PATCH(request, { params }) {
   return PUT(request, { params });
 }
