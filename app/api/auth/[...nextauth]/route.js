@@ -2,8 +2,8 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import GitHubProvider from 'next-auth/providers/github';
-import { TursoAdapter } from '../../../lib/turso-adapter';
-import { initDb } from '../../../lib/db';
+import { TursoAdapter } from '@/lib/turso-adapter';
+import { initDb } from '@/lib/db';
 
 let dbInitialized = false;
 async function ensureDb() {

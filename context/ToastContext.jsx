@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useState, useCallback, useMemo, useEffect } from 'react';
+import { createContext, useState, useCallback, useMemo, useEffect, useContext } from 'react';
 
 export const ToastContext = createContext(null);
 
@@ -61,5 +61,11 @@ export const ToastProvider = ({ children }) => {
     </ToastContext.Provider>
   );
 };
+
+export function useToast() {
+  const ctx = useContext(ToastContext);
+  if (!ctx) throw new Error('useToast debe usarse dentro de ToastProvider');
+  return ctx;
+}
 
 export default ToastProvider;
