@@ -2,45 +2,59 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import GitHubProvider from 'next-auth/providers/github';
-import TwitchProvider from 'next-auth/providers/twitch';
 import { TursoAdapter } from '../../../lib/turso-adapter';
 import { initDb } from '../../../lib/db';
 
-// Asegurar que las tablas existan al iniciar
 let dbInitialized = false;
 async function ensureDb() {
   if (!dbInitialized) {
-    await initDb();
-    dbInitialized = true;
+    try {
+      await initDb();
+      dbInitialized = true;
+    } catch (e) {
+      console.error('Error inicializando base de datos:', e.message);
+    }
   }
+}
+
+const providers = [];
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  );
+}
+
+if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
+  providers.push(
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    })
+  );
+}
+
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  providers.push(
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    })
+  );
 }
 
 export const authOptions = {
   adapter: TursoAdapter(),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    }),
-    TwitchProvider({
-      clientId: process.env.TWITCH_CLIENT_ID,
-      clientSecret: process.env.TWITCH_CLIENT_SECRET,
-    }),
-  ],
+  providers,
   pages: {
     signIn: '/login',
     error: '/login',
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn() {
       await ensureDb();
       return true;
     },
